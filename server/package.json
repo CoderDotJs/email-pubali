@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.3",
+    "google-auth-library": "^9.6.3",
+    "google-spreadsheet": "^4.1.1",
+    "moment": "^2.30.1",
+    "mongoose": "^8.1.2",
+    "nodemailer": "^6.9.9",
+    "nodemailer-plugin-inline-base64": "^2.1.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
