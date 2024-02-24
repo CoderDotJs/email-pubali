@@ -10,6 +10,7 @@ import Login from "./Login.jsx";
 import PrivateRoute from "./Auth/PrivateRoute.jsx";
 import AddUser from "./AddUser.jsx";
 import Stats from "./Stats.jsx";
+import Upload from "./Upload.jsx";
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 <Route index path="/" element={<App />} />
                 <Route path="add-user" element={<AddUser />} />
                 <Route path="stats" element={<Stats />} />
+                <Route path="upload" element={<Upload />} />
               </Route>
             </Routes>
             <Toaster />

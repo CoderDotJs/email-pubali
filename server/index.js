@@ -1,6 +1,6 @@
 import express from "express";
 import nodemailer from "nodemailer";
-import fileUpload from "express-fileupload";
+// import fileUpload from "express-fileupload";
 import cors from "cors";
 import User from "./User.model.js";
 import mongoose from "mongoose";
@@ -9,14 +9,129 @@ import { read, utils } from "xlsx";
 import Stats from "./Stats.model.js";
 import inlineBase64 from "nodemailer-plugin-inline-base64";
 import moment from "moment";
+import path from "path";
+import fs from "fs";
+import multer from "multer";
+const __dirname = path.resolve();
+// Ensure the 'uploads' directory exists, create it if not
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+  console.log("Created uploads directory");
+}
 
 const app = express();
-app.use(fileUpload());
+// app.use(fileUpload());
 app.use(cors());
 app.use(express.json());
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    console.log(file);
+    cb(null, "uploads/"); // specify the upload directory
+  },
+  filename: (req, file, cb) => {
+    console.log(file);
+    cb(null, file.originalname); // specify the file name
+  },
+});
+
+const upload = multer({ storage: storage });
+
 app.get("/", async (req, res) => {
   res.send("Hello World!");
+});
+
+app.post("/upload", upload.single("excel"), (req, res) => {
+  return res.json({ message: "File uploaded successfully" });
+});
+
+// Endpoint to get the list of uploaded files
+app.get("/files", (req, res) => {
+  if (fs.existsSync(uploadDir)) {
+    fs.readdir(uploadDir, (err, files) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Error reading the upload directory" });
+      }
+      res.json({ files });
+    });
+  } else {
+    fs.mkdirSync(uploadDir);
+    fs.readdir(uploadDir, (err, files) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Error reading the upload directory" });
+      }
+      res.json({ files });
+    });
+  }
+});
+
+// Endpoint to read a single file
+app.get("/file/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, "uploads", filename);
+
+  // Check if the file exists
+  if (fs.existsSync(filePath)) {
+    try {
+      const workbook = xlsx.readFile(filePath);
+      // Assuming you have only one sheet in the Excel file
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      // Parse sheet data into JSON format
+      const jsonData = utils.sheet_to_json(sheet, { header: 1 });
+      const emailArr = jsonData
+        .slice(1, jsonData.length)
+        .filter((l) => l.length == 2); //Output: [['Akash', 'md.akash@6724@gmail.com'], ...rest]
+
+      res.json({ data: emailArr });
+    } catch (error) {
+      res.status(500).json({ error: "Error reading the XLSX file" });
+    }
+  } else {
+    res.status(404).json({ error: "XLSX file not found" });
+  }
+});
+
+// Endpoint to download a single file
+app.get("/download/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(uploadDir, filename);
+
+  // Check if the file exists
+  if (fs.existsSync(filePath)) {
+    try {
+      // Set Content-Disposition header to prompt download
+      res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
+      res.sendFile(filePath);
+    } catch (error) {
+      res.status(500).json({ error: "Error reading the file" });
+    }
+  } else {
+    res.status(404).json({ error: "File not found" });
+  }
+});
+
+// Endpoint to delete a single file
+app.delete("/file/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(uploadDir, filename);
+
+  // Check if the file exists
+  if (fs.existsSync(filePath)) {
+    try {
+      fs.unlinkSync(filePath);
+      res.json({ message: "File deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Error deleting the file" });
+    }
+  } else {
+    res.status(404).json({ error: "File not found" });
+  }
 });
 
 app.post("/bulk-email", async (req, res) => {

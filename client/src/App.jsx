@@ -19,6 +19,7 @@ import ReactJodit from "./components/ReactJodit/ReactJodit";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
 import Header from "./Header";
+import { Label } from "./components/ui/label";
 
 // import mailer from "./mailer";
 
@@ -75,7 +76,10 @@ const App = () => {
         // const finalJson = jsonData
         //   .slice(1, jsonData.length)
         //   .filter((l) => l.length != 0);
-        setData(jsonData);
+        setData(
+          jsonData.filter((f) => f.length === 2).slice(1, jsonData.length)
+        );
+        console.log(jsonData);
         // console.log(finalJson);
         setIsLoading(false);
       };
@@ -108,10 +112,13 @@ const App = () => {
 
   return (
     <>
-      <div className="">
+      <div className="container">
         <Header />
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto">
           <div className="grid w-full items-center gap-1.5">
+            <Label className="text-sm text-gray-700">
+              Excel File <span className="text-red-500 font-normal">*</span>
+            </Label>
             <Controller
               control={control}
               rules={{
@@ -148,6 +155,7 @@ const App = () => {
                   onChange={(e) => {
                     onChange(e.target.files);
                   }}
+                  className="mb-3"
                   onBlur={onBlur}
                 />
               )}
@@ -155,49 +163,62 @@ const App = () => {
             />
             {errors.excel && <p className="text-red-500">This is required.</p>}
           </div>
-          <Controller
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: "Subject is required!",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                type="text"
-                placeholder="Subject"
-                value={value}
-                className="my-3"
-                onChange={onChange}
-                onBlur={onBlur}
-              />
+          <div className="grid w-full items-center gap-1.5">
+            <Label className="text-sm text-gray-700">
+              Email Subject <span className="text-red-500 font-normal">*</span>
+            </Label>
+            <Controller
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Subject is required!",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  type="text"
+                  placeholder="Subject"
+                  value={value}
+                  className="mb-3"
+                  onChange={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+              name="subject"
+            />
+            {errors.subject && (
+              <p className="text-red-500">This is required.</p>
             )}
-            name="subject"
-          />
-          {errors.subject && <p className="text-red-500">This is required.</p>}
+          </div>
 
-          <Controller
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: "Email is required!",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                type="email"
-                placeholder="Email"
-                value={value}
-                className="my-3"
-                onChange={onChange}
-                onBlur={onBlur}
-              />
-            )}
-            name="email"
-          />
-          {errors.email && <p className="text-red-500">This is required.</p>}
+          <div className="grid w-full items-center gap-1.5">
+            <Label className="text-sm text-gray-700">
+              Email<span className="text-red-500 font-normal">*</span>
+            </Label>
+
+            <Controller
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Email is required!",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  value={value}
+                  className="mb-3"
+                  onChange={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+              name="email"
+            />
+            {errors.email && <p className="text-red-500">This is required.</p>}
+          </div>
 
           <Controller
             control={control}
@@ -292,11 +313,11 @@ const App = () => {
                     data?.length > 0 &&
                     data?.map((row) => {
                       return (
-                        <TableRow key={row?.Email}>
+                        <TableRow key={row[1]}>
                           <TableCell className="font-medium">
-                            {row?.Name}
+                            {row[0]}
                           </TableCell>
-                          <TableCell>{row?.Email}</TableCell>
+                          <TableCell>{row[1]}</TableCell>
                         </TableRow>
                       );
                     })}
