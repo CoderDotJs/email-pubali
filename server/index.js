@@ -1,6 +1,6 @@
 import express from "express";
 import nodemailer from "nodemailer";
-// import fileUpload from "express-fileupload";
+import fileUpload from "express-fileupload";
 import cors from "cors";
 import User from "./User.model.js";
 import mongoose from "mongoose";
@@ -134,7 +134,7 @@ app.delete("/file/:filename", (req, res) => {
   }
 });
 
-app.post("/bulk-email", async (req, res) => {
+app.post("/bulk-email", fileUpload(), async (req, res) => {
   try {
     const excel = req.files.excel;
     if (!excel || !req.body.data) {
