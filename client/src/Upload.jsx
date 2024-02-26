@@ -1,4 +1,3 @@
-import Header from "./Header";
 import { Controller, useForm } from "react-hook-form";
 import { Label } from "./components/ui/label";
 import { Button } from "./components/ui/button";
@@ -27,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Layout from "./Layout";
 
 const Upload = () => {
   const { data, isLoading, isError, refetch } = useQuery({
@@ -88,9 +88,7 @@ const Upload = () => {
   });
 
   return (
-    <div className="container">
-      <Header />
-
+    <Layout>
       <div>
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto">
           <div className="grid w-full items-center gap-1.5">
@@ -219,7 +217,7 @@ const Upload = () => {
           )}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

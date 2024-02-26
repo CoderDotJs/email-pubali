@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import Header from "./Header";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -12,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "./components/ui/table";
+import Layout from "./Layout";
 
 const AddUser = () => {
   const { data: users, isLoading: isUserLoading } = useQuery({
@@ -50,8 +50,7 @@ const AddUser = () => {
   });
 
   return (
-    <>
-      <Header />
+    <Layout>
       <div className=" flex justify-center items-center">
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -165,7 +164,7 @@ const AddUser = () => {
           </>
         )}
       </div>
-    </>
+    </Layout>
   );
 };
 

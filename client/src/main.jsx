@@ -11,12 +11,13 @@ import PrivateRoute from "./Auth/PrivateRoute.jsx";
 import AddUser from "./AddUser.jsx";
 import Stats from "./Stats.jsx";
 import Upload from "./Upload.jsx";
+import Test from "./Test.jsx";
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <div className="App container mx-auto">
+      <div className="App mx-auto">
         <Router>
           <AuthProvider>
             <Routes>
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 <Route path="add-user" element={<AddUser />} />
                 <Route path="stats" element={<Stats />} />
                 <Route path="upload" element={<Upload />} />
+                <Route path="test" element={<Test />} />
               </Route>
             </Routes>
             <Toaster />
